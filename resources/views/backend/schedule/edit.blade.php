@@ -9,7 +9,7 @@
                 <small>Control Panel</small>
             </h1>
             <ol class="breadcrumb">
-                 <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                 <li class="active">edit</li>
             </ol>
         </section>
@@ -33,7 +33,8 @@
                                     <label>Start<sup class="text-danger">*</sup> :</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="time" required name="start" class="form-control">
+                                    <input type="time" required value="{{ $data->start }}" name="start"
+                                        class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -43,17 +44,8 @@
                                     <label>End<sup class="text-danger">*</sup> :</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="time" required name="end" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label>Duration<sup class="text-danger">*</sup> :</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <input type="time" required name="duration" class="form-control">
+                                    <input type="time" value="{{ $data->end }}" required name="end"
+                                        class="form-control">
                                 </div>
                             </div>
                         </div>

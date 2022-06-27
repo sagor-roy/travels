@@ -86,6 +86,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
         .slider.round:before {
             border-radius: 50%;
         }
+
+        .toast {
+            opacity: 1 !important;
+        }
     </style>
 </head>
 

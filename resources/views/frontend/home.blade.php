@@ -8,27 +8,27 @@
                     <div class="search_box">
                         <h5 class="fw-bold mt-3">Search Tours</h5>
                         <p>Find your dream tour today!</p>
-                        <form action="">
+                        <form action="{{ route('search') }}" method="GET">
                             <div class="input-group">
-                                <select name="" id="" class="form-control">
+                                <select name="from" required class="form-control">
                                     <option value="">From</option>
-                                    <option value="">Thakurgaon</option>
-                                    <option value="">Birgonj</option>
-                                    <option value="">Dhaka</option>
+                                    @foreach ($data as $item)
+                                    <option value="{{ $item->id }}">{{ $item->destination }}</option>
+                                    @endforeach
                                 </select>
                                 <span class="position-absolute"><i class="fa-solid fa-location-dot"></i></span>
                             </div>
                             <div class="input-group">
-                                <select name="" id="" class="form-control">
+                                <select name="to" required class="form-control">
                                     <option value="">To</option>
-                                    <option value="">Dhaka</option>
-                                    <option value="">Birgonj</option>
-                                    <option value="">Thakurgaon</option>
+                                    @foreach ($data as $item)
+                                    <option value="{{ $item->id }}">{{ $item->destination }}</option>
+                                    @endforeach
                                 </select>
                                 <span class="position-absolute"><i class="fa-solid fa-location-dot"></i></span>
                             </div>
                             <div class="input-group">
-                                <input type="date" name="" class="form-control" id="">
+                                <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="form-control" id="">
                             </div>
                             <button type="submit" class="custom_btn">Find Now</button>
                         </form>

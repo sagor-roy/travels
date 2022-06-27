@@ -44,7 +44,8 @@
                         </a>
                         <ul class="treeview-menu">
                             <li class="{{ Route::is('admin.fleet.vehicles.create') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.fleet.vehicles.create') }}"><i class="fa fa-circle-o"></i> Add
+                                    href="{{ route('admin.fleet.vehicles.create') }}"><i class="fa fa-circle-o"></i>
+                                    Add
                                     Vehicles</a></li>
                             <li class="{{ Route::is('admin.fleet.vehicles.index') ? 'active' : '' }}"><a
                                     href="{{ route('admin.fleet.vehicles.index') }}"><i class="fa fa-circle-o"></i>
@@ -55,7 +56,7 @@
             </li>
 
             <li
-                class="treeview {{ Route::is('admin.trip.dest.create') || Route::is('admin.trip.dest.index') || Route::is('admin.trip.route.create') || Route::is('admin.trip.route.index') || Route::is('admin.trip.schedule.create') || Route::is('admin.trip.schedule.index') ? 'active' : '' }}">
+                class="treeview {{ Route::is('admin.trip.dest.create') || Route::is('admin.trip.dest.index') || Route::is('admin.trip.route.create') || Route::is('admin.trip.route.index') || Route::is('admin.trip.schedule.create') || Route::is('admin.trip.schedule.index') || Route::is('admin.trip.create') || Route::is('admin.trip.index') ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-link"></i> <span>Trip Management</span>
                     <span class="pull-right-container">
@@ -111,15 +112,20 @@
                                     Schedule List</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li
+                        class="treeview {{ Route::is('admin.trip.create') || Route::is('admin.trip.index') ? 'active' : '' }}">
                         <a href="#"><i class="fa fa-circle-o"></i> Trip
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Add Trip</a></li>
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Trip List</a></li>
+                            <li class="{{ Route::is('admin.trip.create') ? 'active' : '' }}"><a
+                                    href="{{ route('admin.trip.create') }}"><i class="fa fa-circle-o"></i> Add
+                                    Trip</a></li>
+                            <li class="{{ Route::is('admin.trip.index') ? 'active' : '' }}"><a
+                                    href="{{ route('admin.trip.index') }}"><i class="fa fa-circle-o"></i> Trip
+                                    List</a></li>
                         </ul>
                     </li>
                 </ul>

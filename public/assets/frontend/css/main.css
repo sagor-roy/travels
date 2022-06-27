@@ -330,20 +330,20 @@ ol {
 }
 
 .seats {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+    /* display: flex; */
+    /* flex-direction: row; */
+    /* flex-wrap: nowrap; */
 }
 
 .seat {
-    display: flex;
-    flex: 0 0 14.28571%;
+    /* display: flex; */
+    /* flex: 0 0 14.28571%; */
     padding: 5px;
     position: relative;
 }
 
 .seat:nth-child(2) {
-    margin-right: 43.28571%;
+    /* margin-right: 43.28571%; */
 }
 
 .seat input[type="checkbox"] {
@@ -386,7 +386,7 @@ ol {
     text-align: center;
     font-size: 17px;
     font-weight: bold;
-    line-height: 1.5rem;
+    line-height: 2.5rem;
     padding: 4px;
     color: #fff;
     background: #26a69a;
