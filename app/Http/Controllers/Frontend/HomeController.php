@@ -30,7 +30,14 @@ class HomeController extends Controller
     {
         $date = $request->input('date');
         $trip = Trip::where('id', $id)->with('vehicles', 'schedules', 'routes', 'types')->first();
-        return view('frontend.load.seat', compact('trip','date'));
+        $order = \App\Models\Order::where('trip_id', $trip->id)
+            ->where('date', $date)
+            ->get()
+            ? \App\Models\Order::where('trip_id', $trip->id)
+            ->where('date', $date)
+            ->get()
+            : [];
+        return view('frontend.load.seat', compact('trip','date','order'));
     }
 
     /**
@@ -40,6 +47,7 @@ class HomeController extends Controller
      */
     public function search(Request $request)
     {
+        Session::forget('seat');
         $from = $request->input('from');
         $to = $request->input('to');
         $date = $request->input('date');
@@ -48,7 +56,6 @@ class HomeController extends Controller
             $route = Routee::where('from', $from)->where('to', $to)->first();
             if ($route) {
                 $trip = Trip::where('route_id', $route->id)->with('vehicles', 'schedules', 'routes', 'types')->get();
-                // return $trip;
                 return view('frontend.search', compact('data', 'from', 'to', 'date', 'trip'));
             }
             Toastr::error('No bus found for selected dates or cities');

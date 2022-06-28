@@ -66,14 +66,27 @@
                                 <h6>{{ date('d-M-Y', strtotime($date)) }}</h6>
                                 {{ date('h:m a', strtotime($item->schedules->start)) }}
                             </td>
+                            @php
+                                $order =
+                                    \App\Models\Order::where('trip_id', $item->id)
+                                        ->where('date', $date)
+                                        ->select('seat')
+                                        ->get() ?? [];
+                                $count = 0;
+                                foreach ($order as $value) {
+                                    foreach (explode('  ', $value['seat']) as $items) {
+                                        $count++;
+                                    }
+                                }
+                            @endphp
                             <td>{{ $item->routes->duration }}</td>
                             <td>{{ $item->types->total }}</td>
-                            <td>16</td>
+                            <td>{{ $item->types->total - $count }}</td>
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->price }}&#2547;</td>
                             <td>
-                                <a href="#book" onclick="tripId({{ $item->id }}, '{{ $date }}')" data-bs-toggle="modal"
-                                    class="btn btn-sm btn-primary">Book</a>
+                                <a href="#book" onclick="tripId({{ $item->id }}, '{{ $date }}')"
+                                    data-bs-toggle="modal" class="btn btn-sm btn-primary">Book</a>
                                 <a title="Google Map" href="#map-{{ $item->id }}" data-bs-toggle="modal"
                                     class="btn btn-sm btn-danger"><i class="fa-solid fa-location-dot"></i></a>
                             </td>
@@ -109,7 +122,6 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                 </div>
             </div>
         </div>
@@ -129,7 +141,7 @@
             })
         }
 
-        function seatFunc(id, price, seat) {
+        function seatFunc(id, price, seat, date) {
             $('#loader').removeClass('d-none');
             $.ajax({
                 url: "{{ route('seat.count') }}",
@@ -138,11 +150,11 @@
                     _token: "{{ csrf_token() }}",
                     seat: seat,
                     price: price,
-                    id: id
+                    id: id,
                 },
                 success: (result) => {
                     $('#loader').addClass('d-none');
-                    tripId(id)
+                    tripId(id, date)
                 }
             })
         }
@@ -152,10 +164,13 @@
             $.ajax({
                 url: "{{ url('trip/data') }}/" + id,
                 type: 'get',
-                data:{date:date},
+                data: {
+                    date: date
+                },
                 success: (result) => {
                     $('#loader').addClass('d-none');
                     $('.modal-body').html(result)
+                    // console.log(result);
                 }
             })
         }

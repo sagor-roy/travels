@@ -3,17 +3,11 @@
         <div class="theatre">
             <div class="screen-side">
                 <div class="screen">Screen</div>
+
                 <h3 class="select-text">Please select a seat</h3>
             </div>
             @php
                 $book = \session()->has('seat') ? \session()->get('seat') : [];
-                $order = \App\Models\Order::where('trip_id', $trip->id)
-                    ->where('date', $date)
-                    ->get()
-                    ? \App\Models\Order::where('trip_id', $trip->id)
-                        ->where('date', $date)
-                        ->get()
-                    : [];
             @endphp
             <ol class="cabin">
                 <li class="row--1">
@@ -30,12 +24,12 @@
                                     col-2 @endif
                                     p-2">
                                         <input type="checkbox"
-                                            onclick="seatFunc({{ $trip->id }}, {{ $trip->price }}, '{{ $seat }}')"
-                                            id="{{ $seat }}-{{ $trip->id }}"
-                                            @foreach ($order as $orders) @foreach (explode('  ', $orders->seat) as $tick) @if ($tick == $seat) disabled @else @foreach ($book as $item) @if ($item['id'] == $trip->id && $seat == $item['seat']) {{ $item['seat'] == $seat ? 'checked' : '' }} @endif
+                                            @foreach ($order as $orders) @foreach (explode('  ', $orders['seat']) as $tick) @if ($tick == $seat) @disabled(true) @endif
                                             @endforeach
-                                @endif
                                 @endforeach
+                                onclick="seatFunc({{ $trip->id }}, {{ $trip->price }}, '{{ $seat }}', '{{ $date }}')"
+                                id="{{ $seat }}-{{ $trip->id }}"
+                                @foreach ($book as $item) @if ($item['id'] == $trip->id) {{ $item['seat'] == $seat ? 'checked' : '' }} @endif
                                 @endforeach
                                 />
                                 <label for="{{ $seat }}-{{ $trip->id }}">{{ $seat }}</label>
