@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -18,8 +20,10 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.fleet.type.index') }}" class="btn btn-sm btn-primary"><i
-                            class="fa fa-list"></i> List</a>
+                    @if ($user->can('fleet.view'))
+                        <a href="{{ route('admin.fleet.type.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i> List</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
@@ -105,23 +109,23 @@
                     </div>
                     <div class="col-md-4">
                         <div class="row">
-                            @foreach (explode(" ",$data->seat) as $item)
-                            @if ($data->layout == '1-1')
-                            <div class="col-md-6 text-center">
-                                <img src="{{ asset('assets/frontend/seat.png') }}" alt="seat" width="50">
-                                <p>{{ $item }}</p>
-                            </div>
-                            @elseif ($data->layout == '2-2')
-                            <div class="col-md-3 text-center">
-                                <img src="{{ asset('assets/frontend/seat.png') }}" alt="seat" width="50">
-                                <p>{{ $item }}</p>
-                            </div>
-                            @elseif ($data->layout == '3-3')
-                            <div class="col-md-2 text-center">
-                                <img src="{{ asset('assets/frontend/seat.png') }}" alt="seat" width="50">
-                                <p>{{ $item }}</p>
-                            </div>
-                            @endif
+                            @foreach (explode(' ', $data->seat) as $item)
+                                @if ($data->layout == '1-1')
+                                    <div class="col-md-6 text-center">
+                                        <img src="{{ asset('assets/frontend/seat.png') }}" alt="seat" width="50">
+                                        <p>{{ $item }}</p>
+                                    </div>
+                                @elseif ($data->layout == '2-2')
+                                    <div class="col-md-3 text-center">
+                                        <img src="{{ asset('assets/frontend/seat.png') }}" alt="seat" width="50">
+                                        <p>{{ $item }}</p>
+                                    </div>
+                                @elseif ($data->layout == '3-3')
+                                    <div class="col-md-2 text-center">
+                                        <img src="{{ asset('assets/frontend/seat.png') }}" alt="seat" width="50">
+                                        <p>{{ $item }}</p>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
                     </div>

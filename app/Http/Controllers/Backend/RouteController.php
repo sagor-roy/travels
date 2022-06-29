@@ -8,10 +8,20 @@ use App\Models\Routee;
 use Brian2694\Toastr\Facades\Toastr;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class RouteController extends Controller
 {
+    public $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,6 +29,9 @@ class RouteController extends Controller
      */
     public function index()
     {
+        if (is_null($this->user) || !$this->user->can('route.view')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Routee::with('froms', 'too')->get();
         return view('backend.route.index', compact('data'));
     }
@@ -30,6 +43,9 @@ class RouteController extends Controller
      */
     public function create()
     {
+        if (is_null($this->user) || !$this->user->can('route.create')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $dest = Destination::all();
         return view('backend.route.create', compact('dest'));
     }
@@ -102,6 +118,9 @@ class RouteController extends Controller
      */
     public function edit($id)
     {
+        if (is_null($this->user) || !$this->user->can('route.edit')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Routee::findOrFail($id);
         $dest = Destination::all();
         return view('backend.route.edit', compact('data', 'dest'));
@@ -159,6 +178,9 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
+        if (is_null($this->user) || !$this->user->can('route.delete')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         Routee::find($id)->delete();
         Toastr::success('Data delete successful!!');
         return redirect()->back();

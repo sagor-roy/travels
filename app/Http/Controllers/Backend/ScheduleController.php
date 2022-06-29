@@ -7,10 +7,21 @@ use App\Models\Schedule;
 use Brian2694\Toastr\Facades\Toastr;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends Controller
 {
+    public $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,6 +29,9 @@ class ScheduleController extends Controller
      */
     public function index()
     {
+        if (is_null($this->user) || !$this->user->can('schedule.view')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Schedule::all();
         return view('backend.schedule.index', compact('data'));
     }
@@ -29,6 +43,9 @@ class ScheduleController extends Controller
      */
     public function create()
     {
+        if (is_null($this->user) || !$this->user->can('schedule.create')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         return view('backend.schedule.create');
     }
 
@@ -70,6 +87,9 @@ class ScheduleController extends Controller
      */
     public function edit($id)
     {
+        if (is_null($this->user) || !$this->user->can('schedule.edit')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Schedule::findOrFail($id);
         return view('backend.schedule.edit', compact('data'));
     }
@@ -113,6 +133,9 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
+        if (is_null($this->user) || !$this->user->can('schedule.delete')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         Schedule::find($id)->delete();
         Toastr::success('Data delete successful!!');
         return redirect()->back();

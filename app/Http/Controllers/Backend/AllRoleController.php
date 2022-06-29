@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Fleet;
+use App\Models\User;
 use Brian2694\Toastr\Facades\Toastr;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
-class FleetTypeController extends Controller
+class AllRoleController extends Controller
 {
     public $user;
 
@@ -28,11 +29,11 @@ class FleetTypeController extends Controller
      */
     public function index()
     {
-        if (is_null($this->user) || !$this->user->can('fleet.view')) {
+        if (is_null($this->user) || !$this->user->can('user.view')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        $data = Fleet::all();
-        return view('backend.type.index', compact('data'));
+        $data = User::where('id', '!=', 1)->get();
+        return view('backend.roles.index', compact('data'));
     }
 
     /**
@@ -42,10 +43,11 @@ class FleetTypeController extends Controller
      */
     public function create()
     {
-        if (is_null($this->user) || !$this->user->can('fleet.create')) {
+        if (is_null($this->user) || !$this->user->can('user.create')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        return view('backend.type.create');
+        $roles = Role::where('id', '!=', 1)->get();
+        return view('backend.roles.create', compact('roles'));
     }
 
     /**
@@ -57,31 +59,27 @@ class FleetTypeController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'type' => 'required|unique:fleets',
-            'layout' => 'required',
-            'seat' => 'required',
-            'total' => 'required',
-            'status' => 'required',
+            'name' => 'required',
+            'email' => 'required|unique:users',
+            'password' => 'required|confirmed'
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors(Toastr::error($validator->errors()->all()[0]))->withInput();
         }
 
-        try {
-            Fleet::create([
-                'type' => $request->input('type'),
-                'layout' => $request->input('layout'),
-                'seat' => $request->input('seat'),
-                'total' => $request->input('total'),
-                'status' => $request->input('status')
-            ]);
-            Toastr::success('Data created successful!!');
-            return redirect()->back();
-        } catch (Exception $error) {
-            Toastr::error($error->getMessage());
-            return redirect()->back();
+        // Create New User
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        if ($request->roles) {
+            $user->assignRole($request->roles);
         }
+        Toastr::success('Data create successful!!!');
+        return redirect()->back();
     }
 
     /**
@@ -90,15 +88,9 @@ class FleetTypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function status(Request $request, $id)
+    public function show($id)
     {
-        try {
-            Fleet::find($id)->update(['status' => $request->input('status')]);
-            return response()->json(200);
-        } catch (Exception $error) {
-            Toastr::error($error->getMessage());
-            return redirect()->back();
-        }
+        //
     }
 
     /**
@@ -109,11 +101,15 @@ class FleetTypeController extends Controller
      */
     public function edit($id)
     {
-        if (is_null($this->user) || !$this->user->can('fleet.edit')) {
+        if (is_null($this->user) || !$this->user->can('user.edit')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        $data = Fleet::findOrFail($id);
-        return view('backend.type.edit', compact('data'));
+        if ($id != 1) {
+            $data = User::findorfail($id);
+            $roles = Role::where('id', '!=', 1)->get();
+            return view('backend.roles.edit', compact('data','roles'));
+        }
+        abort(404);
     }
 
     /**
@@ -126,31 +122,27 @@ class FleetTypeController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'type' => 'required|unique:fleets,type,' . $id,
-            'layout' => 'required',
-            'seat' => 'required',
-            'total' => 'required',
-            'status' => 'required',
+            'name' => 'required',
+            'email' => 'required|unique:users,email,'.$id,
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors(Toastr::error($validator->errors()->all()[0]))->withInput();
         }
 
-        try {
-            Fleet::findOrFail($id)->update([
-                'type' => $request->input('type'),
-                'layout' => $request->input('layout'),
-                'seat' => $request->input('seat'),
-                'total' => $request->input('total'),
-                'status' => $request->input('status')
-            ]);
-            Toastr::success('Data update successful!!');
-            return redirect()->route('admin.fleet.type.index');
-        } catch (Exception $error) {
-            Toastr::error($error->getMessage());
-            return redirect()->back();
+        // Create New User
+        $user = User::findorfail($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->update();
+
+        $user->roles()->detach();
+        if ($request->roles) {
+            $user->assignRole($request->roles);
         }
+        Toastr::success('Data update successful!!!');
+        return redirect()->back();
     }
 
     /**
@@ -161,11 +153,11 @@ class FleetTypeController extends Controller
      */
     public function destroy($id)
     {
-        if (is_null($this->user) || !$this->user->can('fleet.delete')) {
+        if (is_null($this->user) || !$this->user->can('user.delete')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        Fleet::findOrFail($id)->delete();
-        Toastr::success('Data delete successful!!');
+        User::findorfail($id)->delete();
+        Toastr::success('Data delete successful!!!');
         return redirect()->back();
     }
 }

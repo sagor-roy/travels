@@ -10,10 +10,20 @@ use App\Models\Trip;
 use Brian2694\Toastr\Facades\Toastr;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class TripController extends Controller
 {
+    public $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
+    }
     /**
      * Display a listing of the resource.
      *
@@ -21,6 +31,9 @@ class TripController extends Controller
      */
     public function index()
     {
+        if (is_null($this->user) || !$this->user->can('trip.view')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Trip::with('types', 'routes', 'schedules')->get();
         return view('backend.trip.index', compact('data'));
     }
@@ -32,6 +45,9 @@ class TripController extends Controller
      */
     public function create()
     {
+        if (is_null($this->user) || !$this->user->can('trip.create')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $type = Fleet::all();
         $route = Routee::all();
         $schedule = Schedule::all();
@@ -101,6 +117,9 @@ class TripController extends Controller
      */
     public function edit($id)
     {
+        if (is_null($this->user) || !$this->user->can('trip.edit')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $type = Fleet::all();
         $route = Routee::all();
         $schedule = Schedule::all();
@@ -155,6 +174,9 @@ class TripController extends Controller
      */
     public function destroy($id)
     {
+        if (is_null($this->user) || !$this->user->can('trip.delete')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         Trip::findOrFail($id)->delete();
         Toastr::success('Data delete successful!!');
         return redirect()->back();

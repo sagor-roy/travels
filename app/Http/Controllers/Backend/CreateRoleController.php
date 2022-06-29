@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Destination;
+use App\Models\User;
 use Brian2694\Toastr\Facades\Toastr;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
-class DestinationController extends Controller
+class CreateRoleController extends Controller
 {
     public $user;
 
@@ -29,11 +30,11 @@ class DestinationController extends Controller
      */
     public function index()
     {
-        if (is_null($this->user) || !$this->user->can('desti.view')) {
+        if (is_null($this->user) || !$this->user->can('role.view')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        $data = Destination::all();
-        return view('backend.destination.index', compact('data'));
+        $roles = Role::where('id', '!=', 1)->get();
+        return view('backend.roles.create.index', compact('roles'));
     }
 
     /**
@@ -43,10 +44,13 @@ class DestinationController extends Controller
      */
     public function create()
     {
-        if (is_null($this->user) || !$this->user->can('desti.create')) {
+        if (is_null($this->user) || !$this->user->can('role.create')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        return view('backend.destination.create');
+        $group = User::getGroupName();
+        $allPermissions = Permission::get();
+        $total = count($group) + count($allPermissions);
+        return view('backend.roles.create.create', compact('group', 'allPermissions', 'total'));
     }
 
     /**
@@ -57,27 +61,27 @@ class DestinationController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'destination' => 'required|unique:destinations',
-            'status' => 'required'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'role' => 'required|unique:roles,name',
+            ],
+            [
+                'role.required' => 'The role name field is require'
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors(Toastr::error($validator->errors()->all()[0]))->withInput();
         }
 
-        try {
-            Destination::create([
-                'destination' => $request->input('destination'),
-                'description' => $request->input('description'),
-                'status' => $request->input('status')
-            ]);
-            Toastr::success('Data created successful!!');
-            return redirect()->back();
-        } catch (Exception $error) {
-            Toastr::error($error->getMessage());
-            return redirect()->back();
+        $role = Role::create(['name' => $request->input('role')]);
+        $permission = $request->input('permission');
+        if (!empty($permission)) {
+            $role->syncPermissions($permission);
         }
+        Toastr::success('Role create successful!!');
+        return redirect()->back();
     }
 
     /**
@@ -86,15 +90,9 @@ class DestinationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function status(Request $request, $id)
+    public function show($id)
     {
-        try {
-            Destination::find($id)->update(['status' => $request->input('status')]);
-            return response()->json(200);
-        } catch (Exception $error) {
-            Toastr::error($error->getMessage());
-            return redirect()->back();
-        }
+        //
     }
 
     /**
@@ -105,11 +103,17 @@ class DestinationController extends Controller
      */
     public function edit($id)
     {
-        if (is_null($this->user) || !$this->user->can('desti.edit')) {
+        if (is_null($this->user) || !$this->user->can('user.edit')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        $data = Destination::findOrFail($id);
-        return view('backend.destination.edit', compact('data'));
+        if ($id != 1) {
+            $group = User::getGroupName();
+            $allPermissions = Permission::get();
+            $total = count($group) + count($allPermissions);
+            $roles = Role::findorfail($id);
+            return view('backend.roles.create.edit', compact('group', 'allPermissions', 'total', 'roles'));
+        }
+        abort(404);
     }
 
     /**
@@ -121,27 +125,27 @@ class DestinationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'destination' => 'required|unique:destinations,destination,' . $id,
-            'status' => 'required'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'role' => 'required',
+            ],
+            [
+                'role.required' => 'The role name field is require'
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors(Toastr::error($validator->errors()->all()[0]))->withInput();
         }
 
-        try {
-            Destination::find($id)->update([
-                'destination' => $request->input('destination'),
-                'description' => $request->input('description'),
-                'status' => $request->input('status')
-            ]);
-            Toastr::success('Data update successful!!');
-            return redirect()->route('admin.trip.dest.index');
-        } catch (Exception $error) {
-            Toastr::error($error->getMessage());
-            return redirect()->back();
+        $role = Role::find($id);
+        $permission = $request->input('permission');
+        if (!empty($permission)) {
+            $role->syncPermissions($permission);
         }
+        Toastr::success('Role update successful!!');
+        return redirect()->back();
     }
 
     /**
@@ -152,11 +156,14 @@ class DestinationController extends Controller
      */
     public function destroy($id)
     {
-        if (is_null($this->user) || !$this->user->can('desti.delete')) {
+        if (is_null($this->user) || !$this->user->can('user.delete')) {
             abort(403, 'Sorry !! You are Unauthorized to view any admin !');
         }
-        Destination::find($id)->delete();
-        Toastr::success('Data delete successful!!');
+        $role = Role::find($id);
+        if (!is_null($role)) {
+            $role->delete();
+        }
+        Toastr::success('Role delete successful!!');
         return redirect()->back();
     }
 }

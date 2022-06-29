@@ -156,9 +156,13 @@
     </div>
     {{-- loader end --}}
 
-    @include('frontend.partials.navbar')
+    @if (!Route::is('login'))
+        @include('frontend.partials.navbar')
+    @endif
     @yield('content')
-    @include('frontend.partials.footer')
+    @if (!Route::is('login'))
+        @include('frontend.partials.footer')
+    @endif
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{ asset('assets/frontend/js/bootstrap.bundle.min.js') }}"></script>

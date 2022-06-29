@@ -8,10 +8,21 @@ use App\Models\Vehicles;
 use Brian2694\Toastr\Facades\Toastr;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class VehiclesController extends Controller
 {
+    public $user;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,6 +30,9 @@ class VehiclesController extends Controller
      */
     public function index()
     {
+        if (is_null($this->user) || !$this->user->can('vehicle.view')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Vehicles::with('types')->latest()->get();
         return view('backend.vehicles.index', compact('data'));
     }
@@ -30,6 +44,9 @@ class VehiclesController extends Controller
      */
     public function create()
     {
+        if (is_null($this->user) || !$this->user->can('vehicle.create')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $fleet = Fleet::where('status', 1)->get();
         return view('backend.vehicles.create', compact('fleet'));
     }
@@ -103,6 +120,9 @@ class VehiclesController extends Controller
      */
     public function edit($id)
     {
+        if (is_null($this->user) || !$this->user->can('vehicle.edit')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         $data = Vehicles::findOrFail($id);
         $fleet = Fleet::where('status', 1)->get();
         return view('backend.vehicles.edit', compact('data', 'fleet'));
@@ -163,6 +183,9 @@ class VehiclesController extends Controller
      */
     public function destroy($id)
     {
+        if (is_null($this->user) || !$this->user->can('vehicle.delete')) {
+            abort(403, 'Sorry !! You are Unauthorized to view any admin !');
+        }
         Vehicles::findOrFail($id)->delete();
         Toastr::success('Data delete successful!!');
         return redirect()->back();

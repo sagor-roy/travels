@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -9,7 +11,7 @@
                 <small>Control Panel</small>
             </h1>
             <ol class="breadcrumb">
-                 <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                 <li>List</li>
             </ol>
         </section>
@@ -18,8 +20,11 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.trip.dest.create') }}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>
-                        Add</a>
+                    @if ($user->can('desti.create'))
+                        <a href="{{ route('admin.trip.dest.create') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-plus"></i>
+                            Add</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- /.box-header -->
@@ -30,8 +35,12 @@
                                 <th>SL</th>
                                 <th>Destination</th>
                                 <th width="40%">Description</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                @if ($user->can('desti.edit'))
+                                    <th>Status</th>
+                                @endif
+                                @if ($user->can('desti.edit') || $user->can('desti.delete'))
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -40,6 +49,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->destination }}</td>
                                     <td>{{ $item->description }}</td>
+                                    @if ($user->can('desti.edit'))
                                     <td>
                                         <label class="switch">
                                             <input type="checkbox" data-id="{{ $item->id }}"
@@ -47,16 +57,24 @@
                                             <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td>
-                                        <form action="{{ route('admin.trip.dest.destroy', $item->id) }}" class="d-flex"
-                                            method="POST">
-                                            @csrf
-                                            @method('delete')
-                                            <a class="btn btn-xs btn-primary"
-                                                href="{{ route('admin.trip.dest.edit', $item->id) }}">Edit</a>
-                                            <button onclick="return confirm('Are you sure to Delete?')" class="btn btn-xs btn-danger" type="submit">Delete</button>
-                                        </form>
-                                    </td>
+                                    @endif
+                                    @if ($user->can('desti.edit') || $user->can('desti.delete'))
+                                        <td>
+                                            <form action="{{ route('admin.trip.dest.destroy', $item->id) }}"
+                                                class="d-flex" method="POST">
+                                                @csrf
+                                                @method('delete')
+                                                @if ($user->can('desti.edit'))
+                                                    <a class="btn btn-xs btn-primary"
+                                                        href="{{ route('admin.trip.dest.edit', $item->id) }}">Edit</a>
+                                                @endif
+                                                @if ($user->can('desti.delete'))
+                                                    <button onclick="return confirm('Are you sure to Delete?')"
+                                                        class="btn btn-xs btn-danger" type="submit">Delete</button>
+                                                @endif
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
@@ -65,8 +83,12 @@
                                 <th>SL</th>
                                 <th>Destination</th>
                                 <th>Description</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                @if ($user->can('desti.edit'))
+                                    <th>Status</th>
+                                @endif
+                                @if ($user->can('desti.edit') || $user->can('desti.delete'))
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </tfoot>
                     </table>

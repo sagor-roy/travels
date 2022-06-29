@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -18,8 +20,10 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.trip.route.index') }}" class="btn btn-sm btn-primary"><i
-                            class="fa fa-list"></i> List</a>
+                    @if ($user->can('route.view'))
+                        <a href="{{ route('admin.trip.route.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i> List</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->

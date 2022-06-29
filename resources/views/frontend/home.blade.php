@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="ms-2">
                                     <h6 class="text-primary">Total Passenger</h6>
-                                    <h6 class="text-primary">50</h6>
+                                    <h6 class="text-primary">{{ \App\Models\Order::count() }}</h6>
                                 </div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                                 </div>
                                 <div class="ms-2">
                                     <h6 class="text-primary">Total Fleet</h6>
-                                    <h6 class="text-primary">05</h6>
+                                    <h6 class="text-primary">{{ \App\Models\Vehicles::count() }}</h6>
                                 </div>
                             </div>
                         </div>

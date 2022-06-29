@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class HomeController extends Controller
 {
@@ -30,14 +31,11 @@ class HomeController extends Controller
     {
         $date = $request->input('date');
         $trip = Trip::where('id', $id)->with('vehicles', 'schedules', 'routes', 'types')->first();
-        $order = \App\Models\Order::where('trip_id', $trip->id)
+        $order = Order::where('trip_id', $trip->id)
             ->where('date', $date)
             ->get()
-            ? \App\Models\Order::where('trip_id', $trip->id)
-            ->where('date', $date)
-            ->get()
-            : [];
-        return view('frontend.load.seat', compact('trip','date','order'));
+            ?? [];
+        return view('frontend.load.seat', compact('trip', 'date', 'order'));
     }
 
     /**
@@ -73,7 +71,7 @@ class HomeController extends Controller
      */
     public function seatCount(Request $request)
     {
-        $seat = \session()->has('seat') ? \session()->get('seat') : [];
+        $seat = \session()->get('seat') ?? [];
         if (key_exists($request->seat, $seat)) {
             foreach ($seat as $key => $item) {
                 if ($item['seat'] == $request->seat) {
@@ -99,9 +97,9 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function invoice()
     {
-        //
+        return view('frontend.invoice');
     }
 
     /**
@@ -110,9 +108,11 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function download($id)
     {
-        //
+        $show['data'] = Order::findorfail($id);
+        $pdf = PDF::loadView('frontend.invoice', $show);
+        return $pdf->setPaper('a4', 'landscape')->setWarnings(false)->download('ticked.pdf');
     }
 
     /**
@@ -125,19 +125,26 @@ class HomeController extends Controller
     public function order(Request $request)
     {
         // return $request;
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'number' => 'required',
-            'gender' => 'required',
-            'method' => 'required',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'number' => 'required',
+                'gender' => 'required',
+                'method' => 'required',
+                'seat' => 'required',
+            ],
+            [
+                'seat.required' => 'Please select your seat'
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors(Toastr::error($validator->errors()->all()[0]))->withInput();
         }
 
         try {
-            Order::create([
+            $data = Order::create([
                 'trip_id' => $request->input('trip_id'),
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
@@ -145,7 +152,7 @@ class HomeController extends Controller
                 'gender' => $request->input('gender'),
                 'method' => $request->input('method'),
                 'transaction' => uniqid(),
-                'ticked_no' => uniqid(),
+                'ticked_no' => strtoupper(uniqid()),
                 'date' => $request->input('date'),
                 'price' => $request->input('price'),
                 'seat' => $request->input('seat'),
@@ -154,7 +161,7 @@ class HomeController extends Controller
             ]);
             Session::forget('seat');
             Toastr::success('Ticked booking successful!!');
-            return redirect()->back();
+            return view('frontend.invoice', compact('data'));
         } catch (Exception $error) {
             Toastr::error($error->getMessage());
             return redirect()->back();

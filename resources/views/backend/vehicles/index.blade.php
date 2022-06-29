@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -9,7 +11,7 @@
                 <small>Control Panel</small>
             </h1>
             <ol class="breadcrumb">
-                 <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                 <li>List</li>
             </ol>
         </section>
@@ -18,8 +20,11 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.fleet.vehicles.create') }}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>
-                        Add</a>
+                    @if ($user->can('vehicle.create'))
+                        <a href="{{ route('admin.fleet.vehicles.create') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-plus"></i>
+                            Add</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- /.box-header -->
@@ -36,8 +41,12 @@
                                 <th>Owner</th>
                                 <th>Owner Ph.</th>
                                 <th>Brand</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                @if ($user->can('vehicle.edit'))
+                                    <th>Status</th>
+                                @endif
+                                @if ($user->can('vehicle.edit') || $user->can('vehicle.delete'))
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -52,23 +61,32 @@
                                     <td>{{ $item->owner }}</td>
                                     <td>{{ $item->owner_phone }}</td>
                                     <td>{{ $item->brand }}</td>
-                                    <td>
-                                        <label class="switch">
-                                            <input type="checkbox" data-id="{{ $item->id }}"
-                                                {{ $item->status == 1 ? 'checked' : '' }} name="status">
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <form action="{{ route('admin.fleet.vehicles.destroy', $item->id) }}" class="d-flex"
-                                            method="POST">
-                                            @csrf
-                                            @method('delete')
-                                            <a class="btn btn-xs btn-primary"
-                                                href="{{ route('admin.fleet.vehicles.edit', $item->id) }}">Edit</a>
-                                            <button onclick="return confirm('Are you sure to Delete?')" class="btn btn-xs btn-danger" type="submit">Delete</button>
-                                        </form>
-                                    </td>
+                                    @if ($user->can('vehicle.edit'))
+                                        <td>
+                                            <label class="switch">
+                                                <input type="checkbox" data-id="{{ $item->id }}"
+                                                    {{ $item->status == 1 ? 'checked' : '' }} name="status">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
+                                    @endif
+                                    @if ($user->can('vehicle.edit') || $user->can('vehicle.delete'))
+                                        <td>
+                                            <form action="{{ route('admin.fleet.vehicles.destroy', $item->id) }}"
+                                                class="d-flex" method="POST">
+                                                @csrf
+                                                @method('delete')
+                                                @if ($user->can('vehicle.edit'))
+                                                    <a class="btn btn-xs btn-primary"
+                                                        href="{{ route('admin.fleet.vehicles.edit', $item->id) }}">Edit</a>
+                                                @endif
+                                                @if ($user->can('vehicle.delete'))
+                                                    <button onclick="return confirm('Are you sure to Delete?')"
+                                                        class="btn btn-xs btn-danger" type="submit">Delete</button>
+                                                @endif
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
@@ -83,8 +101,12 @@
                                 <th>Owner</th>
                                 <th>Owner Ph.</th>
                                 <th>Brand</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                @if ($user->can('vehicle.edit'))
+                                    <th>Status</th>
+                                @endif
+                                @if ($user->can('vehicle.edit') || $user->can('vehicle.delete'))
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </tfoot>
                     </table>

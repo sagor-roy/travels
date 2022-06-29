@@ -7,12 +7,12 @@ $user = Auth::user();
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Fleet Type
+                Roll Add
                 <small>Control Panel</small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                <li class="active">type</li>
+                <li class="active">Role</li>
             </ol>
         </section>
 
@@ -20,72 +20,72 @@ $user = Auth::user();
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    @if ($user->can('fleet.view'))
-                        <a href="{{ route('admin.fleet.type.index') }}" class="btn btn-sm btn-primary"><i
-                                class="fa fa-list"></i> List</a>
+                    @if ($user->can('user.view'))
+                        <a href="{{ route('admin.role.all.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i>
+                            List</a>
                     @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
-                <form role="form" action="{{ route('admin.fleet.type.store') }}" method="POST">
+                <form role="form" action="{{ route('admin.role.all.store') }}" method="POST">
                     @csrf
                     <div class="box-body">
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-2">
-                                    <label>Fleet Type<sup class="text-danger">*</sup> :</label>
+                                    <label>Name<sup class="text-danger">*</sup> :</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="text" required name="type" class="form-control"
-                                        placeholder="Fleet type">
+                                    <input type="text" required value="{{ old('name') }}" name="name"
+                                        class="form-control" placeholder="Name">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-2">
-                                    <label>Layouts<sup class="text-danger">*</sup> :</label>
+                                    <label>Email<sup class="text-danger">*</sup> :</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <select name="layout" required id="" class="form-control">
-                                        <option value="">Select layouts</option>
-                                        <option value="1-1">1-1</option>
-                                        <option value="2-2">2-2</option>
-                                        <option value="3-3">3-3</option>
+                                    <input type="email" required value="{{ old('email') }}" name="email"
+                                        class="form-control" placeholder="Email">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>Password<sup class="text-danger">*</sup> :</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" required name="password" class="form-control"
+                                        placeholder="Password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>Confirm Password<sup class="text-danger">*</sup> :</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" required name="password_confirmation" class="form-control"
+                                        placeholder="Confirm Password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>Roles<sup class="text-danger">*</sup> :</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <select name="roles[]" class="select_two form-control" multiple="multiple">
+                                        @foreach ($roles as $item)
+                                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                        @endforeach
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label>Seat Number<sup class="text-danger">*</sup> :</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <textarea name="seat" required placeholder="Example:A1 A2 B1 B2" rows="5" class="form-control"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label>Total Seat<sup class="text-danger">*</sup> :</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <input type="text" readonly required name="total" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label>Status<sup class="text-danger">*</sup> :</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <input type="radio" name="status" value="1" id="active">
-                                    <label for="active" style="margin-right: 10px">Active</label>
-                                    <input type="radio" name="status" value="0" id="inactive">
-                                    <label for="inactive">Inactive</label>
                                 </div>
                             </div>
                         </div>
@@ -101,19 +101,4 @@ $user = Auth::user();
         </section>
         <!-- /.content -->
     </div>
-
-@section('script')
-    <script>
-        $(function() {
-            'use strict';
-
-            $('textarea[name="seat"]').on('keyup', function(e) {
-                e.preventDefault();
-                let data = $(this).val();
-                $('input[name="total"]').val(data.split(" ").length);
-
-            })
-        })
-    </script>
-@endsection
 @endsection

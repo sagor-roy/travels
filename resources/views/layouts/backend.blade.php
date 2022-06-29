@@ -91,6 +91,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             opacity: 1 !important;
         }
     </style>
+    <!-- Style -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini fixed">
@@ -127,11 +130,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- AdminLTE App -->
     <script src="{{ asset('assets/backend/dist/js/adminlte.min.js') }}"></script>
     <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+    <!-- Script -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     {!! Toastr::message() !!}
     <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. -->
-     @yield('script')
+    @yield('script')
     <script>
         $(function() {
             $('.table').DataTable({
@@ -140,6 +145,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 'searching': true,
                 'ordering': true,
             })
+
+            $('.select_two').select2({
+                placeholder: "Select a roles",
+            });
         })
     </script>
 </body>

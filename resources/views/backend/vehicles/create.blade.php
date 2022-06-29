@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -9,7 +11,7 @@
                 <small>Control Panel</small>
             </h1>
             <ol class="breadcrumb">
-                 <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                 <li class="active">create</li>
             </ol>
         </section>
@@ -18,7 +20,10 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.fleet.vehicles.index') }}" class="btn btn-sm btn-primary"><i class="fa fa-list"></i> List</a>
+                    @if ($user->can('vehicle.view'))
+                        <a href="{{ route('admin.fleet.vehicles.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i> List</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
@@ -45,7 +50,8 @@
                                     <select name="type" required id="" class="form-control">
                                         <option value="">Select type</option>
                                         @foreach ($fleet as $item)
-                                        <option value="{{ $item->id }}">{{ $item->type }} ({{ $item->total }})</option>
+                                            <option value="{{ $item->id }}">{{ $item->type }} ({{ $item->total }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -126,7 +132,7 @@
                                     <input type="radio" name="status" value="1" id="active">
                                     <label for="active" style="margin-right: 10px">Active</label>
                                     <input type="radio" name="status" value="0" id="inactive">
-                                    <label for="inactive" >Inactive</label>
+                                    <label for="inactive">Inactive</label>
                                 </div>
                             </div>
                         </div>

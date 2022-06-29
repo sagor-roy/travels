@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -18,8 +20,10 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.fleet.vehicles.index') }}" class="btn btn-sm btn-primary"><i
-                            class="fa fa-list"></i> List</a>
+                    @if ($user->can('vehicle.view'))
+                        <a href="{{ route('admin.fleet.vehicles.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i> List</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
@@ -47,7 +51,8 @@
                                     <select name="type" required id="" class="form-control">
                                         @foreach ($fleet as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $data->type_id == $item->id ? 'selected' : '' }}>{{ $item->type }} ({{ $item->total }})
+                                                {{ $data->type_id == $item->id ? 'selected' : '' }}>{{ $item->type }}
+                                                ({{ $item->total }})
                                             </option>
                                         @endforeach
                                     </select>

@@ -87,12 +87,12 @@
                             <td>
                                 <a href="#book" onclick="tripId({{ $item->id }}, '{{ $date }}')"
                                     data-bs-toggle="modal" class="btn btn-sm btn-primary">Book</a>
-                                <a title="Google Map" href="#map-{{ $item->id }}" data-bs-toggle="modal"
+                                <a title="Google Map" href="#maps{{ $item->id }}" data-bs-toggle="modal"
                                     class="btn btn-sm btn-danger"><i class="fa-solid fa-location-dot"></i></a>
                             </td>
                         </tr>
 
-                        <div class="modal fade" id="map-{{ $item->id }}" tabindex="-1" data-bs-keyboard="false"
+                        <div class="modal fade" id="maps{{ $item->id }}" tabindex="-1" data-bs-keyboard="false"
                             aria-hidden="true">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content">

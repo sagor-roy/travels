@@ -7,7 +7,7 @@
                 <h3 class="select-text">Please select a seat</h3>
             </div>
             @php
-                $book = \session()->has('seat') ? \session()->get('seat') : [];
+                $book = \session()->get('seat') ?? [];
             @endphp
             <ol class="cabin">
                 <li class="row--1">
@@ -62,7 +62,7 @@
         <div class="col-6 border py-2">
             @php
                 $single = 0;
-                $price = 0;
+                $prices = 0;
                 $seat = \session()->has('seat') ? \session()->get('seat') : [];
                 $count = 0;
             @endphp
@@ -71,7 +71,7 @@
                     {{ $item['seat'] }},
                     @php
                         $single = $item['price'];
-                        $price += $item['price'];
+                        $prices += $item['price'];
                         $count++;
                     @endphp
                 @endif
@@ -86,7 +86,7 @@
     <div class="row">
         <div class="col-6 border py-2">Total Fare :</div>
         <div class="col-6 border py-2">
-            {{ $price }}
+            {{ $prices }}
             &#2547;</div>
     </div>
     <div class="row">
@@ -98,7 +98,7 @@
     @endphp
     <div class="row">
         <div class="col-6 border py-2">Total Amount :</div>
-        <div class="col-6 border py-2">{{ $price + $totalVat }}&#2547;</div>
+        <div class="col-6 border py-2">{{ $prices + $totalVat }}&#2547;</div>
     </div>
 
 
@@ -110,7 +110,7 @@
             <input type="hidden" name="time" value="{{ $trip->schedules->start }}">
             <input type="hidden" name="date" value="{{ date('Y-m-d', strtotime($date)) }}">
             <input type="hidden" name="seat" value="@foreach ($book as $item) {{ $item['seat'] }} @endforeach">
-            <input type="hidden" name="price" value="{{ $trip->price }}">
+            <input type="hidden" name="price" value="{{ $prices + $totalVat }}">
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">

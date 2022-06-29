@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -9,7 +11,7 @@
                 <small>Control Panel</small>
             </h1>
             <ol class="breadcrumb">
-                 <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                 <li class="active">Edit</li>
             </ol>
         </section>
@@ -18,11 +20,14 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.trip.dest.index') }}" class="btn btn-sm btn-primary"><i class="fa fa-list"></i> List</a>
+                    @if ($user->can('desti.view'))
+                        <a href="{{ route('admin.trip.dest.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i> List</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
-                <form role="form" action="{{ route('admin.trip.dest.update',$data->id) }}" method="POST">
+                <form role="form" action="{{ route('admin.trip.dest.update', $data->id) }}" method="POST">
                     @csrf
                     @method('put')
                     <div class="box-body">
@@ -53,10 +58,12 @@
                                     <label>Status<sup class="text-danger">*</sup> :</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="radio" {{ $data->status == 1 ? 'checked':'' }} name="status" value="1" id="active">
+                                    <input type="radio" {{ $data->status == 1 ? 'checked' : '' }} name="status"
+                                        value="1" id="active">
                                     <label for="active" style="margin-right: 10px">Active</label>
-                                    <input type="radio" {{ $data->status == 0 ? 'checked':'' }} name="status" value="0" id="inactive">
-                                    <label for="inactive" >Inactive</label>
+                                    <input type="radio" {{ $data->status == 0 ? 'checked' : '' }} name="status"
+                                        value="0" id="inactive">
+                                    <label for="inactive">Inactive</label>
                                 </div>
                             </div>
                         </div>

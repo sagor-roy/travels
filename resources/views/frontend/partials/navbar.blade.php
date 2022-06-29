@@ -10,7 +10,7 @@
                 <div class="col-md-9">
                     <ul class="nav_list">
                         <li>
-                            <a href="#">Home</a>
+                            <a href="{{ route('home') }}">Home</a>
                         </li>
                         <li>
                             <a href="#">Ticket Track</a>
@@ -22,7 +22,12 @@
                             <a href="#">Contact</a>
                         </li>
                         <li>
-                            <a href="#">Login</a>
+                            @guest
+                                <a href="{{ route('login') }}">Login</a>
+                            @endguest
+                            @auth
+                                <a href="{{ route('admin.logout') }}">Logout</a>
+                            @endauth
                         </li>
                     </ul>
                 </div>

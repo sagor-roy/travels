@@ -1,5 +1,7 @@
 @extends('layouts.backend')
-
+@php
+$user = Auth::user();
+@endphp
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -18,8 +20,10 @@
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    <a href="{{ route('admin.trip.index') }}" class="btn btn-sm btn-primary"><i class="fa fa-list"></i>
-                        List</a>
+                    @if ($user->can('trip.view'))
+                        <a href="{{ route('admin.trip.index') }}" class="btn btn-sm btn-primary"><i class="fa fa-list"></i>
+                            List</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
@@ -46,7 +50,9 @@
                                     <select name="type" id="" class="form-control">
                                         <option value="">Select fleet type</option>
                                         @foreach ($type as $item)
-                                            <option value="{{ $item->id }}" data-name="{{ $item->type }} ({{ $item->total }})-">{{ $item->type }} ({{ $item->total }})
+                                            <option value="{{ $item->id }}"
+                                                data-name="{{ $item->type }} ({{ $item->total }})-">{{ $item->type }}
+                                                ({{ $item->total }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -62,7 +68,8 @@
                                     <select name="route" id="" class="form-control">
                                         <option value="">Select route</option>
                                         @foreach ($route as $item)
-                                            <option value="{{ $item->id }}" data-name="{{ $item->name }}-">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" data-name="{{ $item->name }}-">
+                                                {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -77,7 +84,9 @@
                                     <select name="schedule" id="" class="form-control">
                                         <option value="">Select route</option>
                                         @foreach ($schedule as $item)
-                                            <option value="{{ $item->id }}" data-name="{{ $item->start }}-{{ $item->end }}">{{ $item->start }}-{{ $item->end }}
+                                            <option value="{{ $item->id }}"
+                                                data-name="{{ $item->start }}-{{ $item->end }}">
+                                                {{ $item->start }}-{{ $item->end }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -90,8 +99,7 @@
                                     <label>Price<sup class="text-danger">*</sup> :</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="number" required name="price" class="form-control"
-                                        placeholder="Price">
+                                    <input type="number" required name="price" class="form-control" placeholder="Price">
                                 </div>
                             </div>
                         </div>
@@ -123,25 +131,25 @@
 
 @section('script')
     <script>
-        $(function(){
+        $(function() {
             "use strict";
 
-            $('select[name="type"]').change(function(event){
+            $('select[name="type"]').change(function(event) {
                 event.preventDefault();
                 var val = $(this).children("option:selected").data('name');
-                $('input[name="title"]').val(val+" "+ $('input[name="title"]').val());
+                $('input[name="title"]').val(val + " " + $('input[name="title"]').val());
             })
 
-            $('select[name="route"]').change(function(event){
+            $('select[name="route"]').change(function(event) {
                 event.preventDefault();
                 var val = $(this).children("option:selected").data('name');
-                $('input[name="title"]').val($('input[name="title"]').val() +" "+ val);
+                $('input[name="title"]').val($('input[name="title"]').val() + " " + val);
             })
 
-            $('select[name="schedule"]').change(function(event){
+            $('select[name="schedule"]').change(function(event) {
                 event.preventDefault();
                 var val = $(this).children("option:selected").data('name');
-                $('input[name="title"]').val($('input[name="title"]').val() +"  "+ val);
+                $('input[name="title"]').val($('input[name="title"]').val() + "  " + val);
             })
         })
     </script>
