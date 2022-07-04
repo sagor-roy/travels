@@ -112,11 +112,15 @@
             <input type="hidden" name="seat" value="@foreach ($book as $item) {{ $item['seat'] }} @endforeach">
             <input type="hidden" name="price" value="{{ $prices + $totalVat }}">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 position-relative">
                     <div class="mb-3">
                         <label for="" class="form-label">Mobile No
                             :</label>
-                        <input type="number" required name="number" class="form-control">
+                        <input type="number" onkeyup="myFunction(event, this)" required name="number"
+                            class="form-control">
+                        <div id="number_list">
+
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">

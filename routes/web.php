@@ -23,6 +23,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('seat/count', 'seatCount')->name('seat.count');
     Route::post('invoice', 'order')->name('order');
     Route::get('download/{id}', 'download')->name('download');
+    Route::post('number-search', 'numberSearch')->name('number-search');
 });
 
 // auth

@@ -81,13 +81,18 @@ class HomeController extends Controller
             session(['seat' => $seat]);
             return 'remove';
         } else {
-            $seat[$request->seat] = [
-                'seat' => $request->seat,
-                'id' => $request->id,
-                'price' => $request->price,
-            ];
-            \session(['seat' => $seat]);
-            return $seat;
+            if (count($seat) < 4) {
+                $seat[$request->seat] = [
+                    'seat' => $request->seat,
+                    'id' => $request->id,
+                    'price' => $request->price,
+                ];
+                \session(['seat' => $seat]);
+                return $seat;
+            }
+            return response()->json([
+                'message' => 'You can select maximum 4 seat'
+            ]);
         }
     }
 
@@ -100,6 +105,13 @@ class HomeController extends Controller
     public function invoice()
     {
         return view('frontend.invoice');
+    }
+
+    public function numberSearch(Request $request)
+    {
+        $query = $request->input('query');
+        $data = Order::where('number', 'LIKE', "%{$query}%")->limit(10)->get();
+        return view('frontend.load.list', compact('data'));
     }
 
     /**

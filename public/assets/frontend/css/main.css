@@ -493,3 +493,25 @@ ol {
 .seat__box.b {
     background-color: #9f9595 !important;
 }
+
+ul.list {
+    position: absolute;
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #eeeeee;
+}
+
+#number_list {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: all ease 0.5s;
+}
+
+ul.list>li>a {
+    color: black;
+    border-bottom: 1px solid #c2cbd3;
+    display: block;
+    padding: 3px 25px;
+}

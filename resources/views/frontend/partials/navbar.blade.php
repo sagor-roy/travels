@@ -26,7 +26,7 @@
                                 <a href="{{ route('login') }}">Login</a>
                             @endguest
                             @auth
-                                <a href="{{ route('admin.logout') }}">Logout</a>
+                                <a href="{{ route('admin.dashboard') }}">Admin</a>
                             @endauth
                         </li>
                     </ul>

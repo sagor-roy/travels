@@ -121,7 +121,7 @@
                     <button type="button" onclick="sessionClose()" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div id="numberTrack" class="modal-body">
                 </div>
             </div>
         </div>
@@ -155,6 +155,9 @@
                 success: (result) => {
                     $('#loader').addClass('d-none');
                     tripId(id, date)
+                    if (result.message) {
+                        alert(result.message)
+                    }
                 }
             })
         }
@@ -173,6 +176,35 @@
                     // console.log(result);
                 }
             })
+        }
+
+        function myFunction(e) {
+            let query = e.target.value;
+            if (query != '') {
+                var _token = "{{ csrf_token() }}";
+                $.ajax({
+                    url: "{{ route('number-search') }}",
+                    method: "POST",
+                    data: {
+                        query: query,
+                        _token: _token
+                    },
+                    success: (data) => {
+                        $('#numberTrack #number_list').css('transform', 'scale(1)');
+                        $('#numberTrack #number_list').html(data)
+                    }
+                });
+            }
+        }
+
+        $(document).on('click', 'body', function() {
+            $('#numberTrack #number_list').css('transform', 'scaleY(0)');
+        });
+
+        function selectAdd(number, name, email, gender) {
+            $('#numberTrack input[name="number"]').val('0' + number);
+            $('#numberTrack input[name="name"]').val(name);
+            $('#numberTrack input[name="email"]').val(email);
         }
     </script>
 @endsection
