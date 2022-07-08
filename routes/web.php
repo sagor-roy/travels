@@ -49,7 +49,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
             Route::get('create', 'create')->name('create');
             Route::get('view/{id}', 'edit')->name('view');
             Route::post('store', 'store')->name('store');
-            Route::put('update/{id}', 'update')->name('update');
             Route::delete('delete/{id}', 'destroy')->name('destroy');
             Route::get('trip/{id}', 'trip')->name('trip');
             Route::post('seats', 'seats')->name('seats');

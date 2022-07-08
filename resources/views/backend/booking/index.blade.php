@@ -20,11 +20,11 @@ $user = Auth::user();
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    {{-- @if ($user->can('desti.create')) --}}
-                    <a href="{{ route('admin.ticket.booking.create') }}" class="btn btn-sm btn-primary"><i
-                            class="fa fa-plus"></i>
-                        Add</a>
-                    {{-- @endif --}}
+                    @if ($user->can('booking.create'))
+                        <a href="{{ route('admin.ticket.booking.create') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-plus"></i>
+                            Add</a>
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- /.box-header -->
@@ -42,16 +42,17 @@ $user = Auth::user();
                                 <th>Seat Number</th>
                                 <th>Payment Type</th>
                                 <th>Payment Status</th>
-                                {{-- @if ($user->can('desti.edit') || $user->can('desti.delete')) --}}
-                                <th>Action</th>
-                                {{-- @endif --}}
+                                @if ($user->can('booking.view') || $user->can('booking.delete'))
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($data as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ date('Y-M-d', strtotime($item->date)) }} {{ date('h:i a', strtotime($item->time)) }}</td>
+                                    <td>{{ date('Y-M-d', strtotime($item->date)) }}
+                                        {{ date('h:i a', strtotime($item->time)) }}</td>
                                     <td>{{ $item->ticked_no }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->number }}</td>
@@ -60,23 +61,23 @@ $user = Auth::user();
                                     <td>{{ $item->seat }}</td>
                                     <td>{{ $item->method }}</td>
                                     <td>{{ $item->status }}</td>
-                                    {{-- @if ($user->can('desti.edit') || $user->can('desti.delete')) --}}
-                                    <td>
-                                        <form action="{{ route('admin.ticket.booking.destroy', $item->id) }}" class="d-flex"
-                                            method="POST">
-                                            @csrf
-                                            @method('delete')
-                                            {{-- @if ($user->can('desti.edit')) --}}
-                                            <a class="btn btn-xs btn-primary"
-                                                href="{{ route('admin.ticket.booking.view', $item->id) }}">view</a>
-                                            {{-- @endif
-                                                @if ($user->can('desti.delete')) --}}
-                                            <button onclick="return confirm('Are you sure to Delete?')"
-                                                class="btn btn-xs btn-danger" type="submit">Delete</button>
-                                            {{-- @endif --}}
-                                        </form>
-                                    </td>
-                                    {{-- @endif --}}
+                                    @if ($user->can('booking.view') || $user->can('booking.delete'))
+                                        <td>
+                                            <form action="{{ route('admin.ticket.booking.destroy', $item->id) }}"
+                                                class="d-flex" method="POST">
+                                                @csrf
+                                                @method('delete')
+                                                @if ($user->can('booking.view'))
+                                                    <a class="btn btn-xs btn-primary"
+                                                        href="{{ route('admin.ticket.booking.view', $item->id) }}">view</a>
+                                                @endif
+                                                @if ($user->can('booking.delete'))
+                                                    <button onclick="return confirm('Are you sure to Delete?')"
+                                                        class="btn btn-xs btn-danger" type="submit">Delete</button>
+                                                @endif
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
@@ -91,9 +92,9 @@ $user = Auth::user();
                                 <th>Seat Number</th>
                                 <th>Payment Type</th>
                                 <th>Payment Status</th>
-                                {{-- @if ($user->can('desti.edit') || $user->can('desti.delete')) --}}
-                                <th>Action</th>
-                                {{-- @endif --}}
+                                @if ($user->can('booking.view') || $user->can('booking.delete'))
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </tfoot>
                     </table>

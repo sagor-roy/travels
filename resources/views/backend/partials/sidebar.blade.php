@@ -13,44 +13,59 @@ $user = Auth::user();
             <li class="{{ Route::is('admin.dashboard') ? 'active' : '' }}"><a href="{{ route('admin.dashboard') }}"><i
                         class="fa fa-link"></i>
                     <span>Dashboard</span></a></li>
-            <li class="treeview {{ Route::is('admin.ticket.booking.index') || Route::is('admin.ticket.booking.create') ? 'active':'' }}">
-                <a href="#">
-                    <i class="fa fa-link"></i> <span>Ticket Management</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li class="treeview {{ Route::is('admin.ticket.booking.index') || Route::is('admin.ticket.booking.create') ? 'active':'' }}">
-                        <a href="#"><i class="fa fa-circle-o"></i> Booking Information
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li class="{{ Route::is('admin.ticket.booking.create') ? 'active':'' }}"><a href="{{ route('admin.ticket.booking.create') }}"><i class="fa fa-circle-o"></i> Add
-                                    Booking</a></li>
-                            <li class="{{ Route::is('admin.ticket.booking.index') ? 'active':'' }}"><a href="{{ route('admin.ticket.booking.index') }}"><i class="fa fa-circle-o"></i> Booking
-                                    List</a></li>
-                        </ul>
-                    </li>
+            @if ($user->can('booking.view') || $user->can('booking.create') || $user->can('booking.delete'))
+                <li
+                    class="treeview {{ Route::is('admin.ticket.booking.index') || Route::is('admin.ticket.booking.create') ? 'active' : '' }}">
+                    <a href="#">
+                        <i class="fa fa-link"></i> <span>Ticket Management</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @if ($user->can('booking.view') || $user->can('booking.create'))
+                            <li
+                                class="treeview {{ Route::is('admin.ticket.booking.index') || Route::is('admin.ticket.booking.create') ? 'active' : '' }}">
+                                <a href="#"><i class="fa fa-circle-o"></i> Booking Information
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    @if ($user->can('booking.create'))
+                                        <li class="{{ Route::is('admin.ticket.booking.create') ? 'active' : '' }}"><a
+                                                href="{{ route('admin.ticket.booking.create') }}"><i
+                                                    class="fa fa-circle-o"></i> Add
+                                                Booking</a></li>
+                                    @endif
+                                    @if ($user->can('booking.view'))
+                                        <li class="{{ Route::is('admin.ticket.booking.index') ? 'active' : '' }}">
+                                            <a href="{{ route('admin.ticket.booking.index') }}"><i
+                                                    class="fa fa-circle-o"></i> Booking
+                                                List</a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                        @endif
 
-                    <li class="treeview">
-                        <a href="#"><i class="fa fa-circle-o"></i> Passenger
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li class=""><a href=""><i class="fa fa-circle-o"></i>
-                                    Add
-                                    Passenger</a></li>
-                            <li class=""><a href=""><i class="fa fa-circle-o"></i>
-                                Passenger List</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
+                        <li class="treeview">
+                            <a href="#"><i class="fa fa-circle-o"></i> Passenger
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li class=""><a href=""><i class="fa fa-circle-o"></i>
+                                        Add
+                                        Passenger</a></li>
+                                <li class=""><a href=""><i class="fa fa-circle-o"></i>
+                                        Passenger List</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            @endif
 
             @if ($user->can('fleet.view') || $user->can('fleet.create') || $user->can('fleet.edit') || $user->can('fleet.delete') || $user->can('vehicle.view') || $user->can('vehicle.create') || $user->can('vehicle.edit') || $user->can('vehicle.delete'))
                 <li

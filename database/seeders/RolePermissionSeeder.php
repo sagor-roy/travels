@@ -76,6 +76,14 @@ class RolePermissionSeeder extends Seeder
                 ]
             ],
             [
+                'group_name' => 'booking',
+                'permission' => [
+                    'booking.view',
+                    'booking.create',
+                    'booking.delete',
+                ]
+            ],
+            [
                 'group_name' => 'user',
                 'permission' => [
                     'user.view',

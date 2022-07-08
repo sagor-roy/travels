@@ -285,10 +285,10 @@ $user = Auth::user();
         <section class="content container-fluid">
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
-                    {{-- @if ($user->can('desti.view')) --}}
+                    @if ($user->can('booking.view'))
                     <a href="{{ route('admin.ticket.booking.index') }}" class="btn btn-sm btn-primary"><i
                             class="fa fa-list"></i> List</a>
-                    {{-- @endif --}}
+                    @endif
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
