@@ -13,6 +13,45 @@ $user = Auth::user();
             <li class="{{ Route::is('admin.dashboard') ? 'active' : '' }}"><a href="{{ route('admin.dashboard') }}"><i
                         class="fa fa-link"></i>
                     <span>Dashboard</span></a></li>
+            <li class="treeview {{ Route::is('admin.ticket.booking.index') || Route::is('admin.ticket.booking.create') ? 'active':'' }}">
+                <a href="#">
+                    <i class="fa fa-link"></i> <span>Ticket Management</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="treeview {{ Route::is('admin.ticket.booking.index') || Route::is('admin.ticket.booking.create') ? 'active':'' }}">
+                        <a href="#"><i class="fa fa-circle-o"></i> Booking Information
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="{{ Route::is('admin.ticket.booking.create') ? 'active':'' }}"><a href="{{ route('admin.ticket.booking.create') }}"><i class="fa fa-circle-o"></i> Add
+                                    Booking</a></li>
+                            <li class="{{ Route::is('admin.ticket.booking.index') ? 'active':'' }}"><a href="{{ route('admin.ticket.booking.index') }}"><i class="fa fa-circle-o"></i> Booking
+                                    List</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-circle-o"></i> Passenger
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class=""><a href=""><i class="fa fa-circle-o"></i>
+                                    Add
+                                    Passenger</a></li>
+                            <li class=""><a href=""><i class="fa fa-circle-o"></i>
+                                Passenger List</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
             @if ($user->can('fleet.view') || $user->can('fleet.create') || $user->can('fleet.edit') || $user->can('fleet.delete') || $user->can('vehicle.view') || $user->can('vehicle.create') || $user->can('vehicle.edit') || $user->can('vehicle.delete'))
                 <li
                     class="treeview {{ Route::is('admin.fleet.type.create') || Route::is('admin.fleet.type.index') || Route::is('admin.fleet.vehicles.create') || Route::is('admin.fleet.vehicles.index') || Route::is('admin.fleet.schedule.create') || Route::is('admin.fleet.schedule.index') ? 'active' : '' }}">
@@ -184,7 +223,8 @@ $user = Auth::user();
                                     @endif
                                     @if ($user->can('trip.view'))
                                         <li class="{{ Route::is('admin.trip.index') ? 'active' : '' }}"><a
-                                                href="{{ route('admin.trip.index') }}"><i class="fa fa-circle-o"></i>
+                                                href="{{ route('admin.trip.index') }}"><i
+                                                    class="fa fa-circle-o"></i>
                                                 Trip
                                                 List</a></li>
                                     @endif

@@ -173,7 +173,8 @@ class HomeController extends Controller
             ]);
             Session::forget('seat');
             Toastr::success('Ticked booking successful!!');
-            return view('frontend.invoice', compact('data'));
+            $trip = Trip::with('routes', 'types')->findOrFail($request->input('trip_id'));
+            return view('frontend.invoice', compact('data','trip'));
         } catch (Exception $error) {
             Toastr::error($error->getMessage());
             return redirect()->back();

@@ -3,9 +3,11 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Backend\AllRoleController;
 use App\Http\Controllers\Backend\BackendController;
+use App\Http\Controllers\Backend\BookingController;
 use App\Http\Controllers\Backend\CreateRoleController;
 use App\Http\Controllers\Backend\DestinationController;
 use App\Http\Controllers\Backend\FleetTypeController;
+use App\Http\Controllers\Backend\PassengerController;
 use App\Http\Controllers\Backend\RouteController;
 use App\Http\Controllers\Backend\ScheduleController;
 use App\Http\Controllers\Backend\TripController;
@@ -38,6 +40,32 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // dashboard
     Route::get('dashboard', [BackendController::class, 'index'])->name('dashboard');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+    //ticket manage
+    Route::prefix('ticket')->name('ticket.')->group(function () {
+        //booking
+        Route::prefix('booking')->name('booking.')->controller(BookingController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::get('view/{id}', 'edit')->name('view');
+            Route::post('store', 'store')->name('store');
+            Route::put('update/{id}', 'update')->name('update');
+            Route::delete('delete/{id}', 'destroy')->name('destroy');
+            Route::get('trip/{id}', 'trip')->name('trip');
+            Route::post('seats', 'seats')->name('seats');
+            Route::post('search', 'search')->name('search');
+        });
+
+        //passenger
+        Route::prefix('passenger')->name('passenger.')->controller(PassengerController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('store', 'store')->name('store');
+            Route::put('update/{id}', 'update')->name('update');
+            Route::delete('delete/{id}', 'destroy')->name('destroy');
+        });
+    });
 
     //fleet manage
     Route::prefix('fleet')->name('fleet.')->group(function () {

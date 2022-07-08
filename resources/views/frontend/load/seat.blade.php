@@ -24,12 +24,15 @@
                                     col-2 @endif
                                     p-2">
                                         <input type="checkbox"
-                                            @foreach ($order as $orders) @foreach (explode('  ', $orders['seat']) as $tick) @if ($tick == $seat) @disabled(true) @endif
+                                            @foreach ($order as $orders) @foreach (explode('  ', $orders['seat']) as $tick) 
+                                            @if ($tick == $seat) 
+                                            @disabled(true) @endif
                                             @endforeach
                                 @endforeach
                                 onclick="seatFunc({{ $trip->id }}, {{ $trip->price }}, '{{ $seat }}', '{{ $date }}')"
                                 id="{{ $seat }}-{{ $trip->id }}"
-                                @foreach ($book as $item) @if ($item['id'] == $trip->id) {{ $item['seat'] == $seat ? 'checked' : '' }} @endif
+                                @foreach ($book as $item) @if ($item['id'] == $trip->id) 
+                                {{ $item['seat'] == $seat ? 'checked' : '' }} @endif
                                 @endforeach
                                 />
                                 <label for="{{ $seat }}-{{ $trip->id }}">{{ $seat }}</label>

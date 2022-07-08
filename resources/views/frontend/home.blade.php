@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="ms-2">
                                     <h6 class="text-primary">Total Passenger</h6>
-                                    <h6 class="text-primary">{{ \App\Models\Order::count() }}</h6>
+                                    <h6 class="text-primary">{{ \App\Models\Order::groupBy('number')->count() }}</h6>
                                 </div>
                             </div>
                         </div>

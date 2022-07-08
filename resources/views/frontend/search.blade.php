@@ -64,7 +64,7 @@
                             <td>{{ $item->vehicles->model_no }}</td>
                             <td>
                                 <h6>{{ date('d-M-Y', strtotime($date)) }}</h6>
-                                {{ date('h:m a', strtotime($item->schedules->start)) }}
+                                {{ date('h:i a', strtotime($item->schedules->start)) }}
                             </td>
                             @php
                                 $order =

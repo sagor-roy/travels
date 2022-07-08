@@ -163,7 +163,9 @@
                             <td>
                                 Ticked No #: {{ $data->ticked_no }}<br />
                                 Created: {{ date('M m, Y', strtotime($data->created_at)) }}<br />
-                                Transaction ID: {{ $data->transaction }}
+                                Transaction ID: {{ $data->transaction }} <br>
+                                Route: {{ $trip->routes->name }} <br>
+                                Fleet: {{ $trip->types->type }} <br>
                             </td>
 
                             <td>

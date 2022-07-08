@@ -24,4 +24,8 @@ class Order extends Model
         'price',
         'status',
     ];
+
+    public function trip() {
+        return $this->belongsTo(Trip::class,'trip_id');
+    }
 }
