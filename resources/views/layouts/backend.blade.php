@@ -90,6 +90,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
         .toast {
             opacity: 1 !important;
         }
+
+        ul.list {
+            position: absolute;
+            width: 100%;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background-color: #eeeeee;
+        }
+
+        #number_list {
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: all ease 0.5s;
+        }
+
+        ul.list>li>a {
+            color: black;
+            border-bottom: 1px solid #c2cbd3;
+            display: block;
+            padding: 3px 25px;
+        }
     </style>
     <!-- Style -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
@@ -125,8 +147,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="{{ asset('assets/backend/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <!-- DataTables -->
     <script src="{{ asset('assets/backend/bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}">
-    </script>
+    <script src="{{ asset('assets/backend/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('assets/backend/dist/js/adminlte.min.js') }}"></script>
     <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>

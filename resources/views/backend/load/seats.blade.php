@@ -22,6 +22,7 @@
                                             @disabled(true) @endif
                                             @endforeach
                                 @endforeach
+                                onclick="totalPrice({{ $trip->price+25 }})"
                                 value="{{ $seat }}"
                                 name="seat[]"
                                 type="checkbox" id="{{ $seat }}-{{ $trip->id }}" />

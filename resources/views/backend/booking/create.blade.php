@@ -286,8 +286,8 @@ $user = Auth::user();
             <div class="box box-primary">
                 <div class="box-header with-border text-right">
                     @if ($user->can('booking.view'))
-                    <a href="{{ route('admin.ticket.booking.index') }}" class="btn btn-sm btn-primary"><i
-                            class="fa fa-list"></i> List</a>
+                        <a href="{{ route('admin.ticket.booking.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-list"></i> List</a>
                     @endif
                 </div>
                 <!-- /.box-header -->
@@ -461,6 +461,11 @@ $user = Auth::user();
             $('input[name="number"]').val('0' + number);
             $('input[name="name"]').val(name);
             $('input[name="email"]').val(email);
+        }
+
+        function totalPrice(price) {
+            let total = $('input[name="price"]').val();
+            $('input[name="price"]').val(+price + +total);
         }
     </script>
 @endsection
