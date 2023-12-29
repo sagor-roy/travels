@@ -7,9 +7,26 @@ use App\Models\Destination;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DestinationController extends Controller
 {
+    public function index()
+    {
+        try {
+            $limit = request('limit', 10);
+            $search = request('search', "");
+            $destination = Destination::when(!empty($search), function ($query) use ($search) {
+                return $query->where('destination', 'LIKE', "%$search%")
+                    ->orWhere('description', 'LIKE', "%$search%");
+            })->paginate($limit);
+            return $this->response('success', $destination, 200, 'Data retrieved successfully!');
+        } catch (Exception $error) {
+            return $this->response('fail', [], 500, 'Something went wrong!');
+        }
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -28,6 +45,49 @@ class DestinationController extends Controller
             return $this->response('fail', [], 500, 'Something went wrong!');
         }
     }
+
+    public function excel_store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->response('error', $validator->errors(), 422);
+        }
+
+        try {
+            $file = $request->file('file');
+            $data = Excel::toArray([], $file);
+            foreach (array_slice($data[0], 1) as $row) {
+                $destinationValue = $row[0];
+                if (!empty($destinationValue)) {
+                    $validator = Validator::make(['destination' => $destinationValue], [
+                        'destination' => [
+                            'required',
+                            Rule::unique('destinations', 'destination'),
+                        ]
+                    ]);
+
+                    if ($validator->fails()) {
+                        return $this->response('error', $validator->errors(), 422);
+                    }
+
+                    Destination::create([
+                        'destination' => $destinationValue,
+                        'description' => $row[1],
+                        'status' => $row[2],
+                    ]);
+                }
+            }
+
+            return $this->response('success', [], 200, 'Data created successfully!');
+        } catch (Exception $error) {
+            return $this->response('fail', [], 500, 'Something went wrong!');
+        }
+    }
+
+
 
     public function status(Request $request, $id)
     {
@@ -81,21 +141,7 @@ class DestinationController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        try {
-            $destination = Destination::find($id);
-            if (!$destination) {
-                return $this->response('fail', [], 404, 'Data not found.');
-            }
-            $destination->delete();
-            return $this->response('success', [], 200, 'Data delete successful!');
-        } catch (Exception $error) {
-            return $this->response('fail', [], 500, 'Failed to delete data.');
-        }
-    }
-
-    public function multi_destroy(Request $request)
+    public function destroy(Request $request, $id)
     {
         try {
             $data = $request->json('selectedRows');

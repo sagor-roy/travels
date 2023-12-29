@@ -24,42 +24,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/test', function () {
-    $limit = request('limit', 10);
-    $search = request('search', "");
-
-    return Test::when(!empty($search), function ($query) use ($search) {
-        return $query->where('title', 'LIKE', "%$search%")
-            ->orWhere('year', 'LIKE', "%$search%");
-    })->paginate($limit);
-});
-
-
-Route::post('/excel-store', function (Request $request) {
-    $request->validate([
-        'file' => 'required|file|mimes:xlsx',
-    ]);
-
-    $file = $request->file('file');
-    $data = Excel::toArray([], $file);
-
-    foreach (array_slice($data[0], 1) as $row) {
-        Test::create([
-            'title' => $row[0],
-            'year' => $row[1],
-        ]);
-    }
-
-    return response()->json(['success' => 'Data imported successfully'], 200);
-});
-
-Route::delete('/delete', function (Request $request) {
-    $data = $request->json('selectedRows');
-    Test::whereIn('id', $data)->delete();
-    return response()->json(['success' => 'Data deleted successfully'], 200);
-});
-
-
 Route::resource('/destination', DestinationController::class);
 Route::put('/destination/status/{id}', [DestinationController::class,'status']);
-Route::post('/destination/multiple-delete', [DestinationController::class,'multi_destroy']);
+Route::post('/destination/excel-store', [DestinationController::class,'excel_store']);
