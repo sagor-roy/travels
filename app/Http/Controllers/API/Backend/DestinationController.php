@@ -93,14 +93,13 @@ class DestinationController extends Controller
     {
         try {
             $destination = Destination::find($id);
-
             if (!$destination) {
                 return $this->response('fail', [], 404, 'Data not found.');
             }
-            $destination->update(['status' => $request->input('status')]);
-            return $this->response('success', [], 200, 'Status update successful!');
+            $destination->update(['status' => $request->status]);
+            return $this->response('success', $destination, 200, 'Status update successful!');
         } catch (Exception $error) {
-            return $this->response('fail', [], 500, 'Failed to update status.');
+            return $this->response('fail', $error->getMessage(), 500, 'Failed to update status.');
         }
     }
 
