@@ -13,7 +13,11 @@ use App\Http\Controllers\Backend\ScheduleController;
 use App\Http\Controllers\Backend\TripController;
 use App\Http\Controllers\Backend\VehiclesController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Imports\TestImport;
+use App\Models\Test;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 // frotnend
 Route::controller(HomeController::class)->group(function () {
@@ -137,7 +141,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         });
     });
 
-    
+
     //role manage
     Route::prefix('role')->name('role.')->group(function () {
         //all role
@@ -160,4 +164,19 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
             Route::delete('delete/{id}', 'destroy')->name('destroy');
         });
     });
+});
+
+Route::post('/excel-store', function (Request $request) {
+    $file = $request->file('file');
+
+    $data = Excel::toArray([], $file);
+
+    foreach (array_slice($data[0],1) as $row) {
+        Test::create([
+            'title' => $row[0],
+            'year' => $row[1],
+        ]);
+    }
+
+    return 'Data imported successfully.';
 });
