@@ -1,12 +1,9 @@
 <?php
 
 use App\Http\Controllers\API\Backend\DestinationController;
-use App\Imports\TestImport;
-use App\Models\Test;
+use App\Http\Controllers\API\Backend\RouteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::resource('/destination', DestinationController::class);
-Route::put('/destination/status/{id}', [DestinationController::class,'status']);
-Route::post('/destination/excel-store', [DestinationController::class,'excel_store']);
+Route::resource('/destination', DestinationController::class)->except(['show', 'create']);
+Route::put('/destination/status/{id}', [DestinationController::class, 'status']);
+Route::post('/destination/excel-store', [DestinationController::class, 'excel_store']);
+
+Route::resource('/route', RouteController::class)->except(['show']);
+Route::put('/route/status/{id}', [RouteController::class, 'status']);
+Route::post('/route/excel-store', [RouteController::class, 'excel_store']);

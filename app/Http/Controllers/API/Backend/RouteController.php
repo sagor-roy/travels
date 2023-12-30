@@ -19,15 +19,45 @@ class RouteController extends Controller
         try {
             $limit = request('limit', 10);
             $search = request('search', "");
-            $route = Routee::with('froms', 'too')
+
+            $routes = Routee::with(['froms', 'too'])
                 ->when(!empty($search), function ($query) use ($search) {
                     return $query->where('name', 'LIKE', "%$search%");
-                })->latest()->paginate($limit);
-            return $this->response('success', $route, 200, 'Data retrieved successfully!');
+                })
+                ->latest()
+                ->paginate($limit);
+
+            // Transform the data to the desired format
+            $formattedRoutes = $routes->toArray();
+            $formattedRoutes['data'] = collect($formattedRoutes['data'])->map(function ($route) {
+                return [
+                    'id' => $route['id'],
+                    'name' => $route['name'],
+                    'from' => $route['froms']['destination'] ?? null,
+                    'to' => $route['too']['destination'] ?? null,
+                    'distance' => $route['distance'],
+                    'duration' => $route['duration'],
+                    'map' => $route['map'],
+                    'status' => $route['status'],
+                ];
+            })->all();
+
+            return $this->response('success', $formattedRoutes, 200, 'Data retrieved successfully!');
         } catch (Exception $error) {
             return $this->response('fail', [], 500, 'Something went wrong!');
         }
     }
+
+    public function create()
+    {
+        try {
+            $destination = Destination::latest()->get();
+            return $this->response('success', $destination, 200, 'Data Get successful!');
+        } catch (Exception $error) {
+            return $this->response('fail', $error->getMessage(), 500, 'Failed to update status.');
+        }
+    }
+
 
     public function store(Request $request)
     {
@@ -99,7 +129,6 @@ class RouteController extends Controller
             return $this->response('fail', [], 500, 'Something went wrong!');
         }
     }
-
     public function status(Request $request, $id)
     {
         try {
@@ -121,8 +150,7 @@ class RouteController extends Controller
             if (!$route) {
                 return $this->response('fail', [], 404, 'Data not found.');
             }
-            $destination = Destination::latest()->get();
-            return $this->response('success', ['route' => $route, 'destination' => $destination], 200, 'Status update successful!');
+            return $this->response('success', $route, 200, 'Status update successful!');
         } catch (Exception $error) {
             return $this->response('fail', $error->getMessage(), 500, 'Failed to update status.');
         }
@@ -144,7 +172,7 @@ class RouteController extends Controller
                 return $this->response('error', $validator->errors(), 422);
             }
 
-            if ($request->from !== $request->to) {
+            if ($request->from != $request->to) {
                 $route = Routee::find($id);
                 if (!$route) {
                     return $this->response('fail', [], 404, 'Data not found.');

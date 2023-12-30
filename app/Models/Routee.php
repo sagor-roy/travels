@@ -20,10 +20,10 @@ class Routee extends Model
     ];
 
     public function froms() {
-        return $this->belongsTo(Destination::class,'from')->where('status',1);
+        return $this->belongsTo(Destination::class,'from');
     }
 
     public function too() {
-        return $this->belongsTo(Destination::class,'to')->where('status',1);
+        return $this->belongsTo(Destination::class,'to');
     }
 }
