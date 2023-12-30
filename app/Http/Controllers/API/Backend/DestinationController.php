@@ -125,7 +125,7 @@ class DestinationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->response('fail', [], 422, $validator->errors());
+            return $this->response('error', $validator->errors(), 422);
         }
 
         try {
