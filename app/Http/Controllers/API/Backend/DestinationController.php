@@ -143,7 +143,7 @@ class DestinationController extends Controller
     public function destroy(Request $request, $id)
     {
         try {
-            $data = $request->json('selectedRows');
+            $data = explode(',', $id);
             Destination::whereIn('id', $data)->delete();
             return $this->response('success', [], 200, 'Data delete successful!');
         } catch (Exception $error) {
