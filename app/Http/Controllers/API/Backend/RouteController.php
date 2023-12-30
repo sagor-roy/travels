@@ -4,24 +4,26 @@ namespace App\Http\Controllers\API\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
+use App\Models\Routee;
+use Brian2694\Toastr\Facades\Toastr;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
-class DestinationController extends Controller
+class RouteController extends Controller
 {
     public function index()
     {
         try {
             $limit = request('limit', 10);
             $search = request('search', "");
-            $destination = Destination::when(!empty($search), function ($query) use ($search) {
-                return $query->where('destination', 'LIKE', "%$search%")
-                    ->orWhere('description', 'LIKE', "%$search%");
-            })->latest()->paginate($limit);
-            return $this->response('success', $destination, 200, 'Data retrieved successfully!');
+            $route = Routee::with('froms', 'too')
+                ->when(!empty($search), function ($query) use ($search) {
+                    return $query->where('name', 'LIKE', "%$search%");
+                })->latest()->paginate($limit);
+            return $this->response('success', $route, 200, 'Data retrieved successfully!');
         } catch (Exception $error) {
             return $this->response('fail', [], 500, 'Something went wrong!');
         }
@@ -31,16 +33,23 @@ class DestinationController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'destination' => 'required|unique:destinations',
-                'status' => 'required'
+                'name' => 'required|unique:routees',
+                'from' => 'required',
+                'to' => 'required',
+                'distance' => 'required',
+                'duration' => 'required',
+                'status' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return $this->response('error', $validator->errors(), 422);
             }
 
-            $destination = Destination::create($request->all());
-            return $this->response('success', $destination, 200, 'Data created successfully!');
+            if ($request->from !== $request->to) {
+                $route = Routee::create($request->all());
+                return $this->response('success', $route, 200, 'Data created successfully!');
+            }
+            return $this->response('warning', [], 200, 'Don\'t same the route location!!');
         } catch (Exception $error) {
             return $this->response('fail', [], 500, 'Something went wrong!');
         }
@@ -60,12 +69,12 @@ class DestinationController extends Controller
             $file = $request->file('file');
             $data = Excel::toArray([], $file);
             foreach (array_slice($data[0], 1) as $row) {
-                $destinationValue = $row[0];
-                if (!empty($destinationValue)) {
-                    $validator = Validator::make(['destination' => $destinationValue], [
-                        'destination' => [
+                $name = $row[0];
+                if (!empty($name)) {
+                    $validator = Validator::make(['name' => $name], [
+                        'name' => [
                             'required',
-                            Rule::unique('destinations', 'destination'),
+                            Rule::unique('routees', 'name'),
                         ]
                     ]);
 
@@ -73,10 +82,14 @@ class DestinationController extends Controller
                         return $this->response('error', $validator->errors(), 422);
                     }
 
-                    Destination::create([
-                        'destination' => $destinationValue,
-                        'description' => $row[1],
-                        'status' => $row[2],
+                    Routee::create([
+                        'name' => $row[0],
+                        'from' => $row[1],
+                        'to' => $row[2],
+                        'distance' => $row[3],
+                        'duration' => $row[4],
+                        'status' => $row[5],
+                        'map' => $row[6],
                     ]);
                 }
             }
@@ -90,12 +103,12 @@ class DestinationController extends Controller
     public function status(Request $request, $id)
     {
         try {
-            $destination = Destination::find($id);
-            if (!$destination) {
+            $route = Routee::find($id);
+            if (!$route) {
                 return $this->response('fail', [], 404, 'Data not found.');
             }
-            $destination->update(['status' => $request->status]);
-            return $this->response('success', $destination, 200, 'Status update successful!');
+            $route->update(['status' => $request->status]);
+            return $this->response('success', $route, 200, 'Status update successful!');
         } catch (Exception $error) {
             return $this->response('fail', $error->getMessage(), 500, 'Failed to update status.');
         }
@@ -104,45 +117,52 @@ class DestinationController extends Controller
     public function edit($id)
     {
         try {
-            $data = Destination::find($id);
-            if (!$data) {
+            $route = Routee::find($id);
+            if (!$route) {
                 return $this->response('fail', [], 404, 'Data not found.');
             }
-            return $this->response('success', $data, 200, 'Data retrieved successfully!');
+            $destination = Destination::latest()->get();
+            return $this->response('success', ['route' => $route, 'destination' => $destination], 200, 'Status update successful!');
         } catch (Exception $error) {
-            return $this->response('fail', [], 500, 'Failed to retrieve data.');
+            return $this->response('fail', $error->getMessage(), 500, 'Failed to update status.');
         }
     }
-
 
     public function update(Request $request, $id)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'destination' => 'required|unique:destinations,destination,' . $id,
-                'status' => 'required'
+                'name' => 'required|unique:routees,name,' . $id,
+                'from' => 'required',
+                'to' => 'required',
+                'distance' => 'required',
+                'duration' => 'required',
+                'status' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return $this->response('error', $validator->errors(), 422);
             }
 
-            $destination = Destination::find($id);
-            if (!$destination) {
-                return $this->response('fail', [], 404, 'Data not found.');
+            if ($request->from !== $request->to) {
+                $route = Routee::find($id);
+                if (!$route) {
+                    return $this->response('fail', [], 404, 'Data not found.');
+                }
+                $route->update($request->all());
+                return $this->response('success', $route, 200, 'Data update successful!');
             }
-            $destination->update($request->all());
-            return $this->response('success', $destination, 200, 'Data update successful!');
+            return $this->response('warning', [], 200, 'Don\'t same the route location!!');
         } catch (Exception $error) {
-            return $this->response('fail', [], 500, 'Failed to update data.');
+            return $this->response('fail', [], 500, 'Something went wrong!');
         }
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
         try {
             $data = explode(',', $id);
-            Destination::whereIn('id', $data)->delete();
+            Routee::whereIn('id', $data)->delete();
             return $this->response('success', [], 200, 'Data delete successful!');
         } catch (Exception $error) {
             return $this->response('fail', [], 500, 'Failed to delete data.');
