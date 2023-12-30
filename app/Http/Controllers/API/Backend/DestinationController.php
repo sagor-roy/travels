@@ -20,7 +20,7 @@ class DestinationController extends Controller
             $destination = Destination::when(!empty($search), function ($query) use ($search) {
                 return $query->where('destination', 'LIKE', "%$search%")
                     ->orWhere('description', 'LIKE', "%$search%");
-            })->paginate($limit);
+            })->latest()->paginate($limit);
             return $this->response('success', $destination, 200, 'Data retrieved successfully!');
         } catch (Exception $error) {
             return $this->response('fail', [], 500, 'Something went wrong!');
