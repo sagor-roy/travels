@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\API\Backend\DestinationController;
+use App\Http\Controllers\API\Backend\FleetController;
 use App\Http\Controllers\API\Backend\RouteController;
 use App\Http\Controllers\API\Backend\ScheduleController;
+use App\Http\Controllers\API\Backend\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,3 +36,13 @@ Route::post('/route/excel-store', [RouteController::class, 'excel_store']);
 // schedule
 Route::resource('/schedule', ScheduleController::class)->except(['show', 'create']);
 Route::post('/schedule/excel-store', [ScheduleController::class, 'excel_store']);
+
+// fleet
+Route::resource('/fleet', FleetController::class)->except(['show','create']);
+Route::put('/fleet/status/{id}', [FleetController::class, 'status']);
+Route::post('/fleet/excel-store', [FleetController::class, 'excel_store']);
+
+// vehicles
+Route::resource('/vehicle', VehicleController::class)->except(['show']);
+Route::put('/vehicle/status/{id}', [VehicleController::class, 'status']);
+Route::post('/vehicle/excel-store', [VehicleController::class, 'excel_store']);

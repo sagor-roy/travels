@@ -8,7 +8,7 @@
                     <div class="search_box">
                         <h5 class="fw-bold mt-3">Search Tours</h5>
                         <p>Find your dream tour today!</p>
-                        {{-- <form action="{{ route('search') }}" method="GET">
+                        <form action="{{ route('search') }}" method="GET">
                             <div class="input-group">
                                 <select name="from" required class="form-control">
                                     <option value="">From</option>
@@ -31,15 +31,15 @@
                                 <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="form-control" id="">
                             </div>
                             <button type="submit" class="custom_btn">Find Now</button>
-                        </form> --}}
-                        <form action="{{ url('/excel-store') }}" method="post" enctype="multipart/form-data">
+                        </form>
+                        {{-- <form action="{{ url('/excel-store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <input type="file" accept=".xlsx" name="file" id="">
                         <button type="submit">submit</button>
-                        </form>
+                        </form> --}}
                     </div>
                 </div>
-                {{-- <div class="col-md-8 ps-md-5">
+                <div class="col-md-8 ps-md-5">
                     <h1>On the placess you'll go</h1>
                     <p>It is not down in any map; true place naver are.</p>
                     <div class="row pt-4">
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                     </div>
-                </div> --}}
+                </div>
             </div>
         </div>
     </section>

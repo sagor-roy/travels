@@ -21,7 +21,7 @@ class Vehicles extends Model
     ];
 
     public function types() {
-        return $this->belongsTo(Fleet::class,'type_id')->where('status',1);
+        return $this->belongsTo(Fleet::class,'type_id')->select('id','type')->where('status',1);
     }
 
     public function trip() {
