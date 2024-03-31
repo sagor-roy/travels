@@ -13,7 +13,7 @@
                                 <select name="from" required class="form-control">
                                     <option value="">From</option>
                                     @foreach ($data as $item)
-                                    <option value="{{ $item->id }}">{{ $item->destination }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->destination }}</option>
                                     @endforeach
                                 </select>
                                 <span class="position-absolute"><i class="fa-solid fa-location-dot"></i></span>
@@ -22,13 +22,14 @@
                                 <select name="to" required class="form-control">
                                     <option value="">To</option>
                                     @foreach ($data as $item)
-                                    <option value="{{ $item->id }}">{{ $item->destination }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->destination }}</option>
                                     @endforeach
                                 </select>
                                 <span class="position-absolute"><i class="fa-solid fa-location-dot"></i></span>
                             </div>
                             <div class="input-group">
-                                <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="form-control" id="">
+                                <input type="date" name="date" value="{{ date('Y-m-d') }}" required
+                                    class="form-control" id="">
                             </div>
                             <button type="submit" class="custom_btn">Find Now</button>
                         </form>
